@@ -1,0 +1,94 @@
+<div class="row profile_title">
+  <div class="medium-4 medium-offset-4 medium-centered columns">
+    <h1 class="text-center"><%= @user.name %></h1>
+  </div>
+</div>
+<div class="row">
+  <div class="medium-8 columns">
+    <h4>What's up?</h4>
+    <%= form_tag "/users/#{@user.id}", method: "post" do %>
+      <fieldset>
+        <legend>Write something</legend>
+        <textarea name="content" row="5"></textarea>
+        <input type="submit" class="button small" value="Submit"/>
+      </fieldset>
+    <% end %>
+  </div>
+  
+  <div class="medium-4 columns">
+    <fieldset>
+      <h4>Friends </h4>
+      <ul id="friends"></ul>
+      <button class="button secondary small" id="btn">Add</button>
+    </fieldset>
+  </div>
+</div>
+<div class="row wall">
+  <div class="medium-12 columns">
+    <h4><%= @user.name%> 's wall</h4>
+    <% @posts.each do |post| %>
+      <div class="panel">
+        <blockquote>
+          <%= post.content %><cite><%= post.user.name %></cite>
+        </blockquote>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  var bouton= document.getElementById("btn");
+  var user_id= <%= current_user.id %>;
+  var friend_id= <%= @user.id %>;
+  function addfriend(){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+      if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+        bouton.onclick= removefriend;
+        bouton.innerHTML = "Remove";
+        updatelist();
+      };
+    };
+    xmlhttp.open("POST", "/users/" + friend_id + "/add", true);
+    xmlhttp.send();
+  };
+  function removefriend(){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+      if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+        bouton.onclick= addfriend;
+        bouton.innerHTML = "Add";
+        updatelist();
+      };
+    };
+    xmlhttp.open("DELETE", "/users/" + friend_id + "/delete", true);
+    xmlhttp.send();
+  };
+  
+  function updatelist(){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+      if (xmlhttp.status == 200 && xmlhttp.readyState ==4) {
+        var data= JSON.parse(xmlhttp.responseText);
+        document.getElementById("friends").innerHTML ="";
+        for (i=0; i<data.length; i++){
+          console.log("ok");
+          document.getElementById("friends").innerHTML += '<li><a href="/users/' + data[i].id +'">' + data[i].name + '</a></li>';
+        };
+      }
+    }
+    xmlhttp.open("GET", "/friends/" + friend_id, true);
+    xmlhttp.send();
+  };
+
+  var cond= <% if @we_are_friends %><%= @we_are_friends %><% else %>0<% end %>;
+  if (cond == 1) {
+    bouton.onclick= removefriend;
+    bouton.innerHTML = "Remove";
+  } else {
+    bouton.onclick= addfriend;
+    bouton.innerHTML = "Add";
+  }
+  
+  updatelist();
+</script>

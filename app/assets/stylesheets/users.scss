@@ -1,0 +1,20 @@
+// Place all the styles related to the Users controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.profile_title, .home {
+  background-color: #000;
+  h1 {
+    color: #fff;
+    font-size: 60px;
+  }
+}
+
+.wall {
+  background-color: #2f395c;
+  h4 {
+    color: #fff;
+    margin-bottom: 20px;
+    padding-top: 20px;
+  }
+}

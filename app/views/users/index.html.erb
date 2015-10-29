@@ -1,0 +1,10 @@
+<h1>List of users</h1>
+<ul>
+	<% @users.each do |user| %>
+		<li> <%= user.name %> : <a href="/users/<%= user.id %>">Profile</a></li>
+    <% end %>
+
+    <%= form_tag '/test',method: :get do%>
+        <%= autocomplete_field_tag 'name', '', users_autocomplete_user_name_path %>
+    <%end%>
+</ul>
